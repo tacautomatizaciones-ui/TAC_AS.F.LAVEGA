@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestiónAsoc v2 · Asociación Cultural y de Festejos Vecinos de la Vega</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --c-bg:         #0d0d0d;
+  --c-surface:    #161616;
+  --c-surface2:   #1f1f1f;
+  --c-border:     #2a2a2a;
+  --c-border2:    #333;
+  --c-primary:    #22c55e;
+  --c-primary-d:  #16a34a;
+  --c-primary-bg: #052e16;
+  --c-text:       #f0f0f0;
+  --c-text2:      #a0a0a0;
+  --c-text3:      #666;
+  --c-danger:     #ef4444;
+  --c-danger-bg:  #2d0a0a;
+  --c-warn:       #f59e0b;
+  --c-warn-bg:    #271c00;
+  --c-blue:       #3b82f6;
+  --c-blue-bg:    #0a1628;
+  --sidebar-w:    260px;
+  --header-h:     56px;
+  --radius:       8px;
+  --radius-sm:    5px;
+  --font-main:    'IBM Plex Sans', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --trans:        0.15s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-main);
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--c-bg); }
+::-webkit-scrollbar-thumb { background: var(--c-border2); border-radius: 3px; }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+#app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--c-surface);
+  border-right: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.logo-icon {
+  width: 32px; height: 32px;
+  background: var(--c-primary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.logo-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--c-text);
+  line-height: 1.2;
+}
+.logo-sub {
+  font-size: 10px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+  letter-spacing: 0.3px;
+}
+.sidebar-assoc {
+  font-size: 11px;
+  color: var(--c-primary);
+  font-weight: 500;
+  padding-left: 1px;
+  letter-spacing: 0.2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px;
+}
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--c-text3);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 12px 8px 6px;
+  font-family: var(--font-mono);
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--trans), color var(--trans);
+  color: var(--c-text2);
+  font-size: 13px;
+  font-weight: 400;
+  user-select: none;
+  position: relative;
+}
+.nav-item:hover { background: var(--c-surface2); color: var(--c-text); }
+.nav-item.active {
+  background: var(--c-primary-bg);
+  color: var(--c-primary);
+  font-weight: 500;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 18px;
+  background: var(--c-primary);
+  border-radius: 0 2px 2px 0;
+}
+.nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--c-primary-bg);
+  color: var(--c-primary);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+}
+
+.sidebar-footer {
+  padding: 12px 14px;
+  border-top: 1px solid var(--c-border);
+  font-size: 10px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+  line-height: 1.7;
+}
+
+/* MAIN */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--c-bg);
+}
+
+/* TOPBAR */
+#topbar {
+  height: var(--header-h);
+  min-height: var(--header-h);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar-icon { font-size: 18px; }
+.topbar-badge {
+  font-size: 11px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+/* CONTENT */
+#content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--trans);
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--c-primary);
+  color: #000;
+}
+.btn-primary:hover { background: var(--c-primary-d); }
+.btn-ghost {
+  background: var(--c-surface2);
+  color: var(--c-text2);
+  border: 1px solid var(--c-border);
+}
+.btn-ghost:hover { border-color: var(--c-border2); color: var(--c-text); }
+.btn-danger {
+  background: var(--c-danger-bg);
+  color: var(--c-danger);
+  border: 1px solid #4d1010;
+}
+.btn-danger:hover { background: #3d1010; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-icon { padding: 7px 9px; }
+
+/* CARDS */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text2);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+/* STAT CARDS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.stat-card.green::before { background: var(--c-primary); }
+.stat-card.red::before { background: var(--c-danger); }
+.stat-card.blue::before { background: var(--c-blue); }
+.stat-card.yellow::before { background: var(--c-warn); }
+.stat-label {
+  font-size: 11px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+.stat-card.green .stat-value { color: var(--c-primary); }
+.stat-card.red .stat-value { color: var(--c-danger); }
+.stat-card.blue .stat-value { color: var(--c-blue); }
+.stat-card.yellow .stat-value { color: var(--c-warn); }
+.stat-sub {
+  font-size: 11px;
+  color: var(--c-text3);
+  margin-top: 4px;
+}
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead th {
+  text-align: left;
+  padding: 9px 12px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--c-border);
+  white-space: nowrap;
+}
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--c-border);
+  color: var(--c-text2);
+  vertical-align: middle;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--c-surface2); color: var(--c-text); }
+.td-primary { color: var(--c-text) !important; font-weight: 500; }
+.td-mono { font-family: var(--font-mono); font-size: 12px; }
+
+/* BADGES */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+.badge-green { background: var(--c-primary-bg); color: var(--c-primary); }
+.badge-red { background: var(--c-danger-bg); color: var(--c-danger); }
+.badge-yellow { background: var(--c-warn-bg); color: var(--c-warn); }
+.badge-blue { background: var(--c-blue-bg); color: var(--c-blue); }
+.badge-gray { background: #1a1a1a; color: var(--c-text3); border: 1px solid var(--c-border); }
+
+/* FORMS */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.form-full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text3);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-family: var(--font-mono);
+}
+.field input,
+.field select,
+.field textarea {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  color: var(--c-text);
+  padding: 8px 10px;
+  font-size: 13px;
+  transition: border-color var(--trans);
+  outline: none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--c-primary);
+}
+.field input::placeholder { color: var(--c-text3); }
+.field select option { background: var(--c-surface); }
+.field textarea { resize: vertical; min-height: 70px; }
+
+/* CHECKBOX */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--c-surface2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-border);
+  cursor: pointer;
+  user-select: none;
+}
+.check-row input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--c-primary);
+  cursor: pointer;
+}
+.check-label { font-size: 13px; color: var(--c-text2); }
+.check-required {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--c-danger);
+  font-family: var(--font-mono);
+}
+.check-optional {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+}
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--c-border);
+  position: sticky;
+  top: 0;
+  background: var(--c-surface);
+  z-index: 1;
+}
+.modal-title { font-size: 15px; font-weight: 600; }
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--c-text3);
+  font-size: 20px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color var(--trans);
+}
+.modal-close:hover { color: var(--c-text); background: var(--c-surface2); }
+.modal-body { padding: 20px; flex: 1; }
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--c-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: var(--c-surface);
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.search-input {
+  flex: 1;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  color: var(--c-text);
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--trans);
+}
+.search-input:focus { border-color: var(--c-primary); }
+.search-input::placeholder { color: var(--c-text3); }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--c-text3);
+}
+.empty-state-icon { font-size: 36px; margin-bottom: 12px; }
+.empty-state-title { font-size: 15px; color: var(--c-text2); font-weight: 500; margin-bottom: 6px; }
+.empty-state-sub { font-size: 12px; }
+
+/* SECTION */
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+.section-title:first-child { margin-top: 0; }
+
+/* FICHA DOCUMENTO */
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.doc-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color var(--trans), transform var(--trans);
+}
+.doc-card:hover { border-color: var(--c-border2); transform: translateY(-1px); }
+.doc-card-icon { font-size: 28px; }
+.doc-card-name { font-size: 13px; font-weight: 600; color: var(--c-text); }
+.doc-card-type {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  background: var(--c-surface2);
+  border-radius: 3px;
+  color: var(--c-text3);
+  display: inline-block;
+  width: fit-content;
+}
+
+/* CAJA MOVIMIENTO */
+.mov-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--c-border);
+  gap: 12px;
+}
+.mov-row:last-child { border-bottom: none; }
+.mov-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mov-dot.entrada { background: var(--c-primary); }
+.mov-dot.salida { background: var(--c-danger); }
+.mov-info { flex: 1; }
+.mov-concepto { font-size: 13px; color: var(--c-text); font-weight: 500; }
+.mov-meta { font-size: 11px; color: var(--c-text3); font-family: var(--font-mono); }
+.mov-importe {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+.mov-importe.entrada { color: var(--c-primary); }
+.mov-importe.salida { color: var(--c-danger); }
+
+/* SALDO CARD */
+.saldo-hero {
+  background: linear-gradient(135deg, var(--c-surface) 0%, var(--c-surface2) 100%);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.saldo-hero::after {
+  content: '₿';
+  position: absolute;
+  right: 24px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 80px;
+  color: var(--c-surface2);
+  font-family: var(--font-mono);
+}
+.saldo-label {
+  font-size: 11px;
+  color: var(--c-text3);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.saldo-amount {
+  font-size: 38px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--c-primary);
+  line-height: 1;
+}
+.saldo-sub { font-size: 12px; color: var(--c-text3); margin-top: 6px; }
+
+/* CONCILIACION */
+.concil-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--c-surface2);
+  margin-bottom: 6px;
+}
+.concil-desc { flex: 1; font-size: 13px; color: var(--c-text2); }
+.concil-amount { font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+
+/* TOAST */
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--c-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideIn 0.2s ease;
+  min-width: 260px;
+}
+.toast.success { border-left: 3px solid var(--c-primary); }
+.toast.error { border-left: 3px solid var(--c-danger); }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-primary); margin-top: 6px; flex-shrink: 0; }
+.activity-text { font-size: 12px; color: var(--c-text2); line-height: 1.5; }
+.activity-time { font-size: 10px; color: var(--c-text3); font-family: var(--font-mono); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- APP SHELL -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-icon" id="sidebar-emoji">🎉</div>
+        <div>
+          <div class="logo-name" id="sidebar-appname">GestiónAsoc · Vecinos de la Vega</div>
+          <div class="logo-sub">v2.0 · 2026</div>
+        </div>
+      </div>
+      <div class="sidebar-assoc" id="sidebar-assoc">Asociación Cultural y de Festejos Vecinos de la Vega</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">General</div>
+      <div class="nav-item active" onclick="nav('dashboard')">
+        <span class="nav-icon">⬛</span> Dashboard
+      </div>
+
+      <div class="nav-section-label">Gestión</div>
+      <div class="nav-item" onclick="nav('socios')">
+        <span class="nav-icon">👥</span> Socios
+        <span class="nav-badge" id="badge-socios">0</span>
+      </div>
+      <div class="nav-item" onclick="nav('gastos')">
+        <span class="nav-icon">💸</span> Gastos
+        <span class="nav-badge" id="badge-gastos">0</span>
+      </div>
+      <div class="nav-item" onclick="nav('caja')">
+        <span class="nav-icon">🏦</span> Caja
+      </div>
+      <div class="nav-item" onclick="nav('banco')">
+        <span class="nav-icon">🏧</span> Banco
+      </div>
+      <div class="nav-item" onclick="nav('conciliacion')">
+        <span class="nav-icon">🔄</span> Conciliación
+      </div>
+
+      <div class="nav-section-label">Contenido</div>
+      <div class="nav-item" onclick="nav('documentacion')">
+        <span class="nav-icon">📁</span> Documentación
+      </div>
+      <div class="nav-item" onclick="nav('recibos')">
+        <span class="nav-icon">🧾</span> Recibos
+      </div>
+      <div class="nav-item" onclick="nav('config')">
+        <span class="nav-icon">⚙️</span> Configuración
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="footer-nombre">Asociación Cultural y de Festejos Vecinos de la Vega</div>
+      <div id="footer-cif">CIF: G24964728</div>
+      <div style="margin-top:4px; color: var(--c-primary);">● Sistema activo</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="main">
+    <header id="topbar">
+      <div class="topbar-title">
+        <span class="topbar-icon" id="topbar-icon">⬛</span>
+        <span id="topbar-title">Dashboard</span>
+        <span class="topbar-badge" id="topbar-badge"></span>
+      </div>
+      <div class="topbar-actions" id="topbar-actions"></div>
+    </header>
+
+    <div id="content">
+
+      <!-- ==================== DASHBOARD ==================== -->
+      <div id="panel-dashboard" class="panel active">
+        <div class="stats-grid" id="dash-stats"></div>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Actividad reciente</div></div>
+            <div id="dash-activity"><div class="empty-state" style="padding:24px"><div class="empty-state-sub">Sin actividad registrada</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Estado del ejercicio 2026</div></div>
+            <div id="dash-ejercicio" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SOCIOS ==================== -->
+      <div id="panel-socios" class="panel">
+        <div class="search-bar">
+          <input class="search-input" type="text" id="socios-search" placeholder="🔍  Buscar por nombre, número, DNI..." oninput="renderSocios()">
+          <select id="socios-filter-estado" onchange="renderSocios()" style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-sm);color:var(--c-text2);padding:8px 10px;font-size:13px;outline:none;">
+            <option value="">Todos los estados</option>
+            <option value="activo">Activo</option>
+            <option value="baja">Baja</option>
+          </select>
+          <select id="socios-filter-tipo" onchange="renderSocios()" style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-sm);color:var(--c-text2);padding:8px 10px;font-size:13px;outline:none;">
+            <option value="">Todos los tipos</option>
+          </select>
+          <button class="btn btn-primary" onclick="openModal('modal-socio')">+ Nuevo socio</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nº</th>
+                  <th>Nombre</th>
+                  <th>DNI / CIF</th>
+                  <th>Tipo</th>
+                  <th>Teléfono</th>
+                  <th>Cuota</th>
+                  <th>Estado</th>
+                  <th>RGPD</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="socios-tbody">
+                <tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-title">Sin socios registrados</div><div class="empty-state-sub">Añade el primer socio con el botón superior</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== GASTOS ==================== -->
+      <div id="panel-gastos" class="panel">
+        <div class="search-bar">
+          <input class="search-input" type="text" id="gastos-search" placeholder="🔍  Buscar gasto..." oninput="renderGastos()">
+          <select id="gastos-filter" onchange="renderGastos()" style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-sm);color:var(--c-text2);padding:8px 10px;font-size:13px;outline:none;">
+            <option value="">Todas las categorías</option>
+          </select>
+          <select id="gastos-filter-estado" onchange="renderGastos()" style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-sm);color:var(--c-text2);padding:8px 10px;font-size:13px;outline:none;">
+            <option value="">Todos los estados</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Revisado">Revisado</option>
+            <option value="Conciliado">Conciliado</option>
+          </select>
+          <button class="btn btn-primary" onclick="openModal('modal-gasto')">+ Nuevo gasto</button>
+        </div>
+        <div class="stats-grid" id="gastos-stats" style="margin-bottom:16px;"></div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Concepto</th>
+                  <th>Categoría</th>
+                  <th>Importe</th>
+                  <th>Forma pago</th>
+                  <th>Estado</th>
+                  <th>Responsable</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="gastos-tbody">
+                <tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-title">Sin gastos registrados</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CAJA ==================== -->
+      <div id="panel-caja" class="panel">
+        <div class="saldo-hero">
+          <div class="saldo-label">Saldo actual en caja</div>
+          <div class="saldo-amount" id="caja-saldo">0,00 €</div>
+          <div class="saldo-sub" id="caja-sub">0 movimientos · Ejercicio 2026</div>
+        </div>
+        <div class="stats-grid" id="caja-stats" style="margin-bottom:16px;"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Movimientos</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-caja')">+ Movimiento</button>
+          </div>
+          <div id="caja-movimientos"><div class="empty-state"><div class="empty-state-icon">🏦</div><div class="empty-state-title">Sin movimientos</div></div></div>
+        </div>
+      </div>
+
+      <!-- ==================== BANCO ==================== -->
+      <div id="panel-banco" class="panel">
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-header"><div class="card-title">Cargar extracto bancario</div></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="file" id="banco-file" accept=".pdf" style="display:none" onchange="cargarExtracto(this)">
+            <button class="btn btn-ghost" onclick="document.getElementById('banco-file').click()">📄 Cargar PDF</button>
+            <button class="btn btn-primary btn-sm" onclick="simularExtracto()">⚡ Simular extracto demo</button>
+            <span style="font-size:12px;color:var(--c-text3);" id="banco-file-name">Ningún archivo cargado</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Movimientos bancarios</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Fecha</th><th>Descripción</th><th>Importe</th><th>Saldo</th><th>Estado</th><th>Acción</th></tr>
+              </thead>
+              <tbody id="banco-tbody">
+                <tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🏧</div><div class="empty-state-title">Carga un extracto para ver movimientos</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CONCILIACIÓN ==================== -->
+      <div id="panel-conciliacion" class="panel">
+        <div class="stats-grid" id="concil-stats" style="margin-bottom:16px;"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Movimientos a conciliar</div>
+            <div style="display:flex;gap:8px;">
+              <select id="concil-filter" onchange="renderConciliacion()" style="background:var(--c-surface2);border:1px solid var(--c-border);border-radius:var(--radius-sm);color:var(--c-text2);padding:6px 10px;font-size:12px;outline:none;">
+                <option value="">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Conciliado">Conciliado</option>
+                <option value="Revisar">Revisar</option>
+              </select>
+            </div>
+          </div>
+          <div id="concil-list"><div class="empty-state"><div class="empty-state-icon">🔄</div><div class="empty-state-title">Carga un extracto bancario primero</div></div></div>
+        </div>
+      </div>
+
+      <!-- ==================== DOCUMENTACIÓN ==================== -->
+      <div id="panel-documentacion" class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+          <div style="font-size:13px;color:var(--c-text3);">Documentos oficiales de la asociación</div>
+          <button class="btn btn-ghost" onclick="abrirDrive()">📂 Abrir carpeta Drive</button>
+        </div>
+        <div class="doc-grid" id="doc-grid"></div>
+      </div>
+
+      <!-- ==================== RECIBOS ==================== -->
+      <div id="panel-recibos" class="panel">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Gestión de recibos</div>
+            <button class="btn btn-primary btn-sm" onclick="generarRecibos()">⚡ Generar recibos pendientes</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Nº</th><th>Socio</th><th>Concepto</th><th>Importe</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr>
+              </thead>
+              <tbody id="recibos-tbody">
+                <tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">🧾</div><div class="empty-state-title">Sin recibos generados</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CONFIG ==================== -->
+      <div id="panel-config" class="panel">
+        <div class="card" style="max-width:700px;">
+          <div class="card-header"><div class="card-title">Datos de la asociación</div></div>
+          <div class="form-grid">
+            <div class="field"><label>Nombre</label><input type="text" id="cfg-nombre"></div>
+            <div class="field"><label>CIF</label><input type="text" id="cfg-cif"></div>
+            <div class="field"><label>Teléfono</label><input type="text" id="cfg-telefono"></div>
+            <div class="field"><label>Email</label><input type="email" id="cfg-email"></div>
+            <div class="field form-full"><label>Dirección</label><input type="text" id="cfg-direccion"></div>
+            <div class="field"><label>Cuota anual (€)</label><input type="number" id="cfg-cuota"></div>
+            <div class="field"><label>Año fiscal</label><input type="number" id="cfg-anio"></div>
+            <div class="field"><label>URL Google Sheets</label><input type="text" id="cfg-sheets" placeholder="https://docs.google.com/spreadsheets/..."></div>
+            <div class="field"><label>URL Google Drive</label><input type="text" id="cfg-drive" placeholder="https://drive.google.com/..."></div>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="guardarConfig()">💾 Guardar configuración</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ==================== MODALES ==================== -->
+
+<!-- MODAL SOCIO -->
+<div class="modal-overlay" id="modal-socio">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👤 Nuevo socio</div>
+      <button class="modal-close" onclick="closeModal('modal-socio')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Nombre completo *</label><input type="text" id="s-nombre" placeholder="Nombre y apellidos"></div>
+        <div class="field"><label>DNI / CIF</label><input type="text" id="s-dni" placeholder="00000000X"></div>
+        <div class="field"><label>Teléfono</label><input type="tel" id="s-telefono" placeholder="600 000 000 (opcional)"></div>
+        <div class="field"><label>Email</label><input type="email" id="s-email" placeholder="correo@ejemplo.com"></div>
+        <div class="field form-full"><label>Dirección</label><input type="text" id="s-direccion" placeholder="Calle, número, localidad"></div>
+        <div class="field"><label>Tipo de socio</label>
+          <select id="s-tipo">
+            <option value="particular">👤 Particular</option>
+            <option value="colaborador">🤝 Colaborador</option>
+            <option value="anunciante">📢 Anunciante</option>
+          </select>
+        </div>
+        <div class="field"><label>Forma de pago</label>
+          <select id="s-pago">
+            <option>Transferencia</option>
+            <option>Efectivo</option>
+            <option>Bizum</option>
+          </select>
+        </div>
+        <div class="field"><label>Estado</label>
+          <select id="s-estado">
+            <option value="activo">✅ Activo</option>
+            <option value="baja">❌ Baja</option>
+          </select>
+        </div>
+        <div class="field"><label>Fecha de alta</label><input type="date" id="s-fecha"></div>
+      </div>
+      <div class="section-title" style="margin-top:18px;">Protección de datos (RGPD)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label class="check-row">
+          <input type="checkbox" id="s-rgpd">
+          <span class="check-label">Acepta el tratamiento de datos personales según la política RGPD de la asociación</span>
+          <span class="check-required">OBLIGATORIO</span>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="s-imagen">
+          <span class="check-label">Autoriza el uso de imagen en publicaciones y redes sociales</span>
+          <span class="check-optional">OPCIONAL</span>
+        </label>
+      </div>
+      <!-- Campos anunciante (ocultos por defecto) -->
+      <div id="s-anunciante-fields" style="display:none;">
+        <div class="section-title" style="margin-top:18px;">Datos de anunciante</div>
+        <div class="form-grid">
+          <div class="field"><label>Nombre del negocio</label><input type="text" id="s-negocio" placeholder="Nombre comercial"></div>
+          <div class="field"><label>Tipo de anuncio</label>
+            <select id="s-tipo-anuncio">
+              <option>Patrocinador Oro</option>
+              <option>Patrocinador Plata</option>
+              <option>Patrocinador Bronce</option>
+              <option>Colaborador Básico</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-socio')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarSocio()">✔ Guardar socio</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL GASTO -->
+<div class="modal-overlay" id="modal-gasto">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">💸 Nuevo gasto</div>
+      <button class="modal-close" onclick="closeModal('modal-gasto')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field form-full"><label>Concepto *</label><input type="text" id="g-concepto" placeholder="Descripción del gasto"></div>
+        <div class="field"><label>Importe (€) *</label><input type="number" id="g-importe" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="field"><label>Fecha *</label><input type="date" id="g-fecha"></div>
+        <div class="field"><label>Categoría</label>
+          <select id="g-categoria"></select>
+        </div>
+        <div class="field"><label>Forma de pago</label>
+          <select id="g-pago">
+            <option>Transferencia</option>
+            <option>Efectivo</option>
+            <option>Bizum</option>
+          </select>
+        </div>
+        <div class="field"><label>Estado</label>
+          <select id="g-estado">
+            <option>Pendiente</option>
+            <option>Revisado</option>
+            <option>Conciliado</option>
+          </select>
+        </div>
+        <div class="field"><label>Responsable</label><input type="text" id="g-responsable" placeholder="Nombre del responsable"></div>
+        <div class="field form-full"><label>Notas</label><textarea id="g-notas" placeholder="Observaciones adicionales..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-gasto')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarGasto()">✔ Guardar gasto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAJA -->
+<div class="modal-overlay" id="modal-caja">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <div class="modal-title">🏦 Movimiento de caja</div>
+      <button class="modal-close" onclick="closeModal('modal-caja')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="field"><label>Tipo *</label>
+          <select id="c-tipo">
+            <option value="Entrada">Entrada (+)</option>
+            <option value="Salida">Salida (−)</option>
+            <option value="Recarga">Recarga</option>
+            <option value="Ajuste">Ajuste</option>
+          </select>
+        </div>
+        <div class="field"><label>Concepto *</label><input type="text" id="c-concepto" placeholder="Descripción del movimiento"></div>
+        <div class="field"><label>Importe (€) *</label><input type="number" id="c-importe" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="field"><label>Fecha *</label><input type="date" id="c-fecha"></div>
+        <div class="field"><label>Responsable</label><input type="text" id="c-responsable" placeholder="Quién realiza el movimiento"></div>
+        <div class="field"><label>Notas</label><textarea id="c-notas" placeholder="Observaciones..." style="min-height:50px;"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-caja')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarMovCaja()">✔ Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ============================================================
+     APP_CONFIG
+     ============================================================ -->
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwpprFDJvFH2bfq_O9oQ8ESU2ojv0I4oL_0NIy34pKL6WzGN1XwFoLrRBTnMpNzzorhWw/exec";
+
+const APP_CONFIG = {
+  app: {
+    nombreApp: "GestiónAsoc · Vecinos de la Vega",
+    subtituloLogin: "Asociación Cultural y de Festejos",
+    piePaginaLogin: "Vecinos de la Vega · Posada de Llanera",
+    subtituloSidebar: "Vecinos de la Vega",
+    emojiDefault: "🎉",
+    storageKey: "vecinosvega_v1"
+  },
+  asociacion: {
+    nombre: "Asociación Cultural y de Festejos Vecinos de la Vega",
+    cif: "G24964728",
+    telefono: "",
+    email: "",
+    direccion: "Calle Carrión nº 4, 2B, Posada de Llanera",
+    registro: "",
+    cuotaAnual: 0,
+    anioFiscal: 2026,
+    sheetsUrl: "",
+    driveUrl: ""
+  },
+  tema: {
+    colorPrimario: "#111111",
+    colorPrimarioClaro: "#333333",
+    colorSecundario: "#22c55e",
+    colorSecundarioClaro: "#4ade80",
+    colorFondo: "#0d0d0d",
+    colorFondoOscuro: "#090909"
+  },
+  modulos: {
+    socios: true,
+    rgpd: true,
+    gastos: true,
+    recibos: true,
+    caja: true,
+    banco: true,
+    conciliacion: true,
+    documentacion: true,
+    anunciantes: true
+  },
+  socios: {
+    tiposPermitidos: [
+      { id: "particular",  nombre: "Particular",  icono: "👤", descripcion: "Vecino/a colaborador/a",              colorClass: "sel-0", extraFields: null },
+      { id: "anunciante",  nombre: "Anunciante",  icono: "📢", descripcion: "Negocio en el programa de fiestas",  colorClass: "sel-1", extraFields: "anunciante" },
+      { id: "colaborador", nombre: "Colaborador", icono: "🤝", descripcion: "Entidad colaboradora",               colorClass: "sel-2", extraFields: null }
+    ],
+    formasPago: ["Transferencia", "Efectivo", "Bizum"],
+    tiposAnuncio: ["Patrocinador Oro", "Patrocinador Plata", "Patrocinador Bronce", "Colaborador Básico"],
+    numeracion: {
+      prefijo: "SOC",
+      siguienteNumero: 1,
+      reutilizarNumeros: false
+    },
+    estados: [
+      { id: "activo", label: "Activo",     color: "#22c55e", bg: "#052e16" },
+      { id: "baja",   label: "No activo",  color: "#ef4444", bg: "#2d0a0a" }
+    ]
+  },
+  gastos: {
+    categorias: ["Pirotecnia", "Música/Orquesta", "Decoración", "Otros"],
+    formasPago: ["Transferencia", "Efectivo", "Bizum"],
+    estados: ["Pendiente", "Revisado", "Conciliado"]
+  },
+  caja: {
+    saldoInicial: 0,
+    categoriasMovimiento: ["Entrada", "Salida", "Recarga", "Ajuste"]
+  },
+  banco: {
+    permitePdf: true,
+    permiteCsv: false,
+    carpetaExtractosNombre: "EXTRACTOS"
+  },
+  conciliacion: {
+    activa: true,
+    estados: ["Pendiente", "Conciliado", "Revisar"]
+  },
+  documentacion: {
+    fichas: [
+      { icono: "📜", nombre: "Estatutos",           tipo: "PDF", colorBadge: "bb"    },
+      { icono: "🔢", nombre: "CIF",                 tipo: "PDF", colorBadge: "bg"    },
+      { icono: "📋", nombre: "Acta Fundacional",    tipo: "PDF", colorBadge: "bgold" },
+      { icono: "🗂️", nombre: "Registro de Socios",  tipo: "PDF", colorBadge: "bb"    },
+      { icono: "📄", nombre: "Modelo 036",          tipo: "PDF", colorBadge: "bg"    },
+      { icono: "🧾", nombre: "Extractos Bancarios", tipo: "PDF", colorBadge: "bb"    },
+      { icono: "📝", nombre: "Libro de Actas",      tipo: "PDF", colorBadge: "bg"    }
+    ]
+  },
+  legal: {
+    textoEntidad: "La Asociación Cultural y de Festejos Vecinos de la Vega, con CIF G24964728 y domicilio en Calle Carrión nº 4, 2B, Posada de Llanera, es la entidad responsable del tratamiento de sus datos personales, en cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).",
+    rgpdObligatorio: true,
+    permiteConsentimientoImagen: true,
+    tituloPaginaJustificante: "Justificante de Pago · Vecinos de la Vega",
+    notaJustificante: "Este documento acredita el pago realizado a la Asociación Cultural y de Festejos Vecinos de la Vega (CIF: G24964728). Consérvelo como comprobante.",
+    msgDisWA: "Hola {nombre}, te enviamos el justificante nº {numJust} de tu aportación a la Asociación Vecinos de la Vega. ¡Gracias por tu colaboración! 🎉",
+    msgDisEmail: {
+      asunto: "Justificante de pago nº {numJust} · Vecinos de la Vega",
+      cuerpo: "Estimado/a {nombre},\n\nAdjunto encontrarás el justificante nº {numJust} correspondiente a tu aportación a la Asociación Cultural y de Festejos Vecinos de la Vega.\n\nMuchas gracias por tu apoyo.\n\nUn saludo,\nAsociación Vecinos de la Vega"
+    },
+    msgJustWA: "Hola {nombre}, te confirmamos la recepción de tu pago (justificante nº {numJust}) en la Asociación Vecinos de la Vega. ¡Gracias! 🙌",
+    msgJustEmail: {
+      asunto: "Confirmación de pago nº {numJust} · Vecinos de la Vega",
+      cuerpo: "Estimado/a {nombre},\n\nConfirmamos la recepción de tu pago. El justificante asignado es el nº {numJust}.\n\nGracias por colaborar con la Asociación Cultural y de Festejos Vecinos de la Vega.\n\nUn cordial saludo,\nJunta Directiva · Vecinos de la Vega"
+    }
+  }
+};
+
+/* ============================================================
+   ESTADO GLOBAL
+   ============================================================ */
+const STATE = {
+  socios:         [],
+  gastos:         [],
+  caja:           [],
+  banco:          [],
+  recibos:        [],
+  actividad:      [],
+  config:         { ...APP_CONFIG.asociacion },
+  _nextSocioNum:  APP_CONFIG.socios.numeracion.siguienteNumero
+};
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const SK = APP_CONFIG.app.storageKey;
+function saveState() {
+  try {
+    localStorage.setItem(SK + '_socios',    JSON.stringify(STATE.socios));
+    localStorage.setItem(SK + '_gastos',    JSON.stringify(STATE.gastos));
+    localStorage.setItem(SK + '_caja',      JSON.stringify(STATE.caja));
+    localStorage.setItem(SK + '_banco',     JSON.stringify(STATE.banco));
+    localStorage.setItem(SK + '_recibos',   JSON.stringify(STATE.recibos));
+    localStorage.setItem(SK + '_actividad', JSON.stringify(STATE.actividad.slice(0,50)));
+    localStorage.setItem(SK + '_nextNum',   STATE._nextSocioNum);
+    localStorage.setItem(SK + '_config',    JSON.stringify(STATE.config));
+  } catch(e) {}
+}
+function loadState() {
+  try {
+    const s = localStorage.getItem(SK + '_socios');    if(s) STATE.socios    = JSON.parse(s);
+    const g = localStorage.getItem(SK + '_gastos');    if(g) STATE.gastos    = JSON.parse(g);
+    const c = localStorage.getItem(SK + '_caja');      if(c) STATE.caja      = JSON.parse(c);
+    const b = localStorage.getItem(SK + '_banco');     if(b) STATE.banco     = JSON.parse(b);
+    const r = localStorage.getItem(SK + '_recibos');   if(r) STATE.recibos   = JSON.parse(r);
+    const a = localStorage.getItem(SK + '_actividad'); if(a) STATE.actividad = JSON.parse(a);
+    const n = localStorage.getItem(SK + '_nextNum');   if(n) STATE._nextSocioNum = parseInt(n);
+    const cfg = localStorage.getItem(SK + '_config');  if(cfg) STATE.config  = JSON.parse(cfg);
+  } catch(e) {}
+}
+
+/* ============================================================
+   GOOGLE SHEETS — INTEGRACIÓN
+   ============================================================ */
+function sendToSheets(payload) {
+  if(!API_URL) return;
+  fetch(API_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+const NAV_META = {
+  dashboard:     { icon: '⬛', title: 'Dashboard' },
+  socios:        { icon: '👥', title: 'Socios' },
+  gastos:        { icon: '💸', title: 'Gastos' },
+  caja:          { icon: '🏦', title: 'Caja' },
+  banco:         { icon: '🏧', title: 'Banco' },
+  conciliacion:  { icon: '🔄', title: 'Conciliación' },
+  documentacion: { icon: '📁', title: 'Documentación' },
+  recibos:       { icon: '🧾', title: 'Recibos' },
+  config:        { icon: '⚙️', title: 'Configuración' }
+};
+let currentPanel = 'dashboard';
+
+function nav(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if(n.getAttribute('onclick') === `nav('${id}')`) n.classList.add('active');
+  });
+  const meta = NAV_META[id] || { icon: '•', title: id };
+  document.getElementById('topbar-icon').textContent = meta.icon;
+  document.getElementById('topbar-title').textContent = meta.title;
+  currentPanel = id;
+  refreshPanel(id);
+}
+
+function refreshPanel(id) {
+  if(id === 'dashboard')     renderDashboard();
+  if(id === 'socios')        renderSocios();
+  if(id === 'gastos')        { initGastoSelects(); renderGastos(); }
+  if(id === 'caja')          renderCaja();
+  if(id === 'banco')         renderBanco();
+  if(id === 'conciliacion')  renderConciliacion();
+  if(id === 'documentacion') renderDocumentacion();
+  if(id === 'recibos')       renderRecibos();
+  if(id === 'config')        renderConfig();
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function fmtEur(n) {
+  return Number(n).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+function fmtDate(d) {
+  if(!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+function uuid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+function padNum(n) {
+  return String(n).padStart(4, '0');
+}
+function socioNumStr(n) {
+  return APP_CONFIG.socios.numeracion.prefijo + '-' + padNum(n);
+}
+function estadoSocio(id) {
+  return APP_CONFIG.socios.estados.find(e => e.id === id) || { label: id, color: '#aaa', bg: '#222' };
+}
+function addActividad(texto) {
+  STATE.actividad.unshift({ texto, ts: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) });
+  if(STATE.actividad.length > 50) STATE.actividad.pop();
+}
+function toast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = (type === 'success' ? '✅' : '❌') + ' ' + msg;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+/* ============================================================
+   MODALES
+   ============================================================ */
+function openModal(id) {
+  if(id === 'modal-socio') {
+    document.getElementById('s-fecha').value = today();
+    document.getElementById('s-rgpd').checked = false;
+    document.getElementById('s-imagen').checked = false;
+  }
+  if(id === 'modal-gasto') {
+    document.getElementById('g-fecha').value = today();
+    initGastoSelects();
+  }
+  if(id === 'modal-caja') {
+    document.getElementById('c-fecha').value = today();
+  }
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+
+/* ============================================================
+   SOCIOS
+   ============================================================ */
+function initSocioFilters() {
+  const sel = document.getElementById('socios-filter-tipo');
+  sel.innerHTML = '<option value="">Todos los tipos</option>';
+  APP_CONFIG.socios.tiposPermitidos.forEach(t => {
+    sel.innerHTML += `<option value="${t.id}">${t.icono} ${t.nombre}</option>`;
+  });
+}
+
+function addSocio(data) {
+  const num = STATE._nextSocioNum++;
+  const socio = {
+    id: uuid(),
+    numero: num,
+    numeroStr: socioNumStr(num),
+    nombre: data.nombre,
+    dni: data.dni || '',
+    telefono: data.telefono || '',
+    email: data.email || '',
+    direccion: data.direccion || '',
+    tipo: data.tipo || 'particular',
+    formaPago: data.formaPago || 'Efectivo',
+    estado: data.estado || 'activo',
+    fechaAlta: data.fechaAlta || today(),
+    rgpd: data.rgpd || false,
+    imagen: data.imagen || false,
+    negocio: data.negocio || '',
+    tipoAnuncio: data.tipoAnuncio || '',
+    cuotaPagada: false,
+    _ts: Date.now()
+  };
+  STATE.socios.push(socio);
+  saveState();
+  addActividad(`Nuevo socio: ${socio.nombre} (${socio.numeroStr})`);
+  return socio;
+}
+
+function guardarSocio() {
+  const nombre = document.getElementById('s-nombre').value.trim();
+  if(!nombre) { toast('El nombre es obligatorio', 'error'); return; }
+  const rgpd = document.getElementById('s-rgpd').checked;
+  if(APP_CONFIG.legal.rgpdObligatorio && !rgpd) {
+    toast('Debes aceptar el RGPD para registrar el socio', 'error');
+    return;
+  }
+
+  const socioCreado = addSocio({
+    nombre,
+    dni:       document.getElementById('s-dni').value.trim(),
+    telefono:  document.getElementById('s-telefono').value.trim(),
+    email:     document.getElementById('s-email').value.trim(),
+    direccion: document.getElementById('s-direccion').value.trim(),
+    tipo:      document.getElementById('s-tipo').value,
+    formaPago: document.getElementById('s-pago').value,
+    estado:    document.getElementById('s-estado').value,
+    fechaAlta: document.getElementById('s-fecha').value,
+    rgpd,
+    imagen:    document.getElementById('s-imagen').checked,
+    negocio:   document.getElementById('s-negocio').value.trim(),
+    tipoAnuncio: document.getElementById('s-tipo-anuncio').value
+  });
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tipo: 'socio',
+      numero: socioCreado.numeroStr,
+      nombre: socioCreado.nombre,
+      dni: socioCreado.dni,
+      tipoSocio: socioCreado.tipo,
+      telefono: socioCreado.telefono,
+      estado: socioCreado.estado,
+      rgpd: socioCreado.rgpd ? 'Sí' : 'No'
+    })
+  }).catch(() => {
+    toast('Socio guardado en la app, pero no se pudo enviar a Google Sheets', 'error');
+  });
+
+  closeModal('modal-socio');
+  document.getElementById('s-nombre').value = '';
+  document.getElementById('s-dni').value = '';
+  document.getElementById('s-telefono').value = '';
+  document.getElementById('s-email').value = '';
+  document.getElementById('s-direccion').value = '';
+  document.getElementById('s-anunciante-fields').style.display = 'none';
+  renderSocios();
+  updateBadges();
+  toast(`Socio ${socioCreado.numeroStr} registrado`);
+}
+
+function cambiarEstadoSocio(id) {
+  const s = STATE.socios.find(x => x.id === id);
+  if(!s) return;
+  s.estado = s.estado === 'activo' ? 'baja' : 'activo';
+  saveState();
+  addActividad(`${s.nombre} → ${s.estado === 'activo' ? 'Activo' : 'Baja'}`);
+  renderSocios();
+  toast(`Estado actualizado: ${s.nombre}`);
+}
+
+function renderSocios() {
+  const q     = (document.getElementById('socios-search')?.value || '').toLowerCase();
+  const est   = document.getElementById('socios-filter-estado')?.value || '';
+  const tipo  = document.getElementById('socios-filter-tipo')?.value || '';
+  let lista   = STATE.socios.filter(s => {
+    const matchQ  = !q   || s.nombre.toLowerCase().includes(q) || s.numeroStr.toLowerCase().includes(q) || s.dni.toLowerCase().includes(q);
+    const matchE  = !est  || s.estado === est;
+    const matchT  = !tipo || s.tipo === tipo;
+    return matchQ && matchE && matchT;
+  });
+  const tbody = document.getElementById('socios-tbody');
+  if(!lista.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-title">Sin resultados</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = lista.map(s => {
+    const est = estadoSocio(s.estado);
+    const tipo = APP_CONFIG.socios.tiposPermitidos.find(t => t.id === s.tipo) || { icono: '?', nombre: s.tipo };
+    return `<tr>
+      <td class="td-mono">${s.numeroStr}</td>
+      <td class="td-primary">${s.nombre}</td>
+      <td class="td-mono" style="color:var(--c-text3)">${s.dni || '—'}</td>
+      <td>${tipo.icono} ${tipo.nombre}</td>
+      <td class="td-mono">${s.telefono || '—'}</td>
+      <td class="td-mono">${fmtEur(APP_CONFIG.asociacion.cuotaAnual)}</td>
+      <td>
+        <span class="badge" style="background:${est.bg};color:${est.color};">
+          ${s.estado === 'activo' ? '●' : '○'} ${est.label}
+        </span>
+      </td>
+      <td>${s.rgpd ? '<span class="badge badge-green">✓ RGPD</span>' : '<span class="badge badge-gray">Pend.</span>'}</td>
+      <td>
+        <div style="display:flex;gap:5px;">
+          <button class="btn btn-ghost btn-sm" onclick="cambiarEstadoSocio('${s.id}')" title="Cambiar estado">⇄</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarSocio('${s.id}')" title="Eliminar">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function eliminarSocio(id) {
+  const s = STATE.socios.find(x => x.id === id);
+  if(!s || !confirm(`¿Eliminar a ${s.nombre}? El número ${s.numeroStr} no se reutilizará.`)) return;
+  STATE.socios = STATE.socios.filter(x => x.id !== id);
+  saveState();
+  addActividad(`Socio eliminado: ${s.nombre} (${s.numeroStr})`);
+  renderSocios();
+  updateBadges();
+  toast(`${s.nombre} eliminado`);
+}
+
+/* ============================================================
+   GASTOS
+   ============================================================ */
+function initGastoSelects() {
+  const sel = document.getElementById('g-categoria');
+  if(!sel) return;
+  sel.innerHTML = '';
+  APP_CONFIG.gastos.categorias.forEach(c => {
+    sel.innerHTML += `<option>${c}</option>`;
+  });
+  const flt = document.getElementById('gastos-filter');
+  if(flt) {
+    flt.innerHTML = '<option value="">Todas las categorías</option>';
+    APP_CONFIG.gastos.categorias.forEach(c => {
+      flt.innerHTML += `<option>${c}</option>`;
+    });
+  }
+}
+
+function addGasto(data) {
+  const gasto = {
+    id: uuid(),
+    concepto:   data.concepto,
+    importe:    parseFloat(data.importe) || 0,
+    fecha:      data.fecha || today(),
+    categoria:  data.categoria || 'Otros',
+    formaPago:  data.formaPago || 'Efectivo',
+    estado:     data.estado || 'Pendiente',
+    responsable: data.responsable || '',
+    notas:      data.notas || '',
+    _ts:        Date.now()
+  };
+  STATE.gastos.push(gasto);
+  saveState();
+  addActividad(`Gasto: ${gasto.concepto} · ${fmtEur(gasto.importe)}`);
+  return gasto;
+}
+
+function guardarGasto() {
+  const concepto = document.getElementById('g-concepto').value.trim();
+  const importe  = document.getElementById('g-importe').value;
+  if(!concepto || !importe) { toast('Concepto e importe son obligatorios', 'error'); return; }
+
+  const gastoCreado = addGasto({
+    concepto,
+    importe,
+    fecha:       document.getElementById('g-fecha').value,
+    categoria:   document.getElementById('g-categoria').value,
+    formaPago:   document.getElementById('g-pago').value,
+    estado:      document.getElementById('g-estado').value,
+    responsable: document.getElementById('g-responsable').value.trim(),
+    notas:       document.getElementById('g-notas').value.trim()
+  });
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tipo: 'gasto',
+      concepto: gastoCreado.concepto,
+      importe: gastoCreado.importe,
+      categoria: gastoCreado.categoria,
+      estado: gastoCreado.estado,
+      responsable: gastoCreado.responsable
+    })
+  }).catch(() => {
+    toast('Gasto guardado en la app, pero no se pudo enviar a Google Sheets', 'error');
+  });
+
+  closeModal('modal-gasto');
+  document.getElementById('g-concepto').value = '';
+  document.getElementById('g-importe').value = '';
+  document.getElementById('g-responsable').value = '';
+  document.getElementById('g-notas').value = '';
+  renderGastos();
+  updateBadges();
+  toast('Gasto registrado');
+}
+
+function cambiarEstadoGasto(id) {
+  const g = STATE.gastos.find(x => x.id === id);
+  if(!g) return;
+  const idx = APP_CONFIG.gastos.estados.indexOf(g.estado);
+  g.estado = APP_CONFIG.gastos.estados[(idx + 1) % APP_CONFIG.gastos.estados.length];
+  saveState();
+  renderGastos();
+  toast(`Estado: ${g.estado}`);
+}
+
+function renderGastos() {
+  const q    = (document.getElementById('gastos-search')?.value || '').toLowerCase();
+  const cat  = document.getElementById('gastos-filter')?.value || '';
+  const est  = document.getElementById('gastos-filter-estado')?.value || '';
+  let lista  = STATE.gastos.filter(g => {
+    const matchQ = !q || g.concepto.toLowerCase().includes(q);
+    const matchC = !cat || g.categoria === cat;
+    const matchE = !est || g.estado === est;
+    return matchQ && matchC && matchE;
+  });
+
+  const total = lista.reduce((a, g) => a + g.importe, 0);
+  const pend  = lista.filter(g => g.estado === 'Pendiente').reduce((a, g) => a + g.importe, 0);
+  const conc  = lista.filter(g => g.estado === 'Conciliado').reduce((a, g) => a + g.importe, 0);
+
+  document.getElementById('gastos-stats').innerHTML = `
+    <div class="stat-card red"><div class="stat-label">Total gastos</div><div class="stat-value">${fmtEur(total)}</div></div>
+    <div class="stat-card yellow"><div class="stat-label">Pendiente</div><div class="stat-value">${fmtEur(pend)}</div></div>
+    <div class="stat-card green"><div class="stat-label">Conciliado</div><div class="stat-value">${fmtEur(conc)}</div></div>
+    <div class="stat-card blue"><div class="stat-label">Nº gastos</div><div class="stat-value">${lista.length}</div></div>
+  `;
+
+  const tbody = document.getElementById('gastos-tbody');
+  if(!lista.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-title">Sin gastos</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = lista.map(g => {
+    const badgeClass = g.estado === 'Pendiente' ? 'badge-yellow' : g.estado === 'Conciliado' ? 'badge-green' : 'badge-blue';
+    return `<tr>
+      <td class="td-mono">${fmtDate(g.fecha)}</td>
+      <td class="td-primary">${g.concepto}</td>
+      <td><span class="badge badge-gray">${g.categoria}</span></td>
+      <td class="td-mono" style="color:var(--c-danger);font-weight:600;">${fmtEur(g.importe)}</td>
+      <td>${g.formaPago}</td>
+      <td><span class="badge ${badgeClass}" style="cursor:pointer" onclick="cambiarEstadoGasto('${g.id}')">${g.estado}</span></td>
+      <td style="color:var(--c-text3)">${g.responsable || '—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="eliminarGasto('${g.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function eliminarGasto(id) {
+  const g = STATE.gastos.find(x => x.id === id);
+  if(!g || !confirm(`¿Eliminar "${g.concepto}"?`)) return;
+  STATE.gastos = STATE.gastos.filter(x => x.id !== id);
+  saveState();
+  renderGastos();
+  updateBadges();
+  toast('Gasto eliminado');
+}
+
+/* ============================================================
+   CAJA
+   ============================================================ */
+function getSaldoCaja() {
+  return APP_CONFIG.caja.saldoInicial + STATE.caja.reduce((acc, m) => {
+    if(m.tipo === 'Entrada' || m.tipo === 'Recarga') return acc + m.importe;
+    if(m.tipo === 'Salida')  return acc - m.importe;
+    return acc; // Ajuste no modifica automáticamente
+  }, 0);
+}
+
+function addMovimientoCaja(data) {
+  const mov = {
+    id: uuid(),
+    tipo:        data.tipo || 'Entrada',
+    concepto:    data.concepto,
+    importe:     parseFloat(data.importe) || 0,
+    fecha:       data.fecha || today(),
+    responsable: data.responsable || '',
+    notas:       data.notas || '',
+    _ts:         Date.now()
+  };
+  STATE.caja.push(mov);
+  saveState();
+  addActividad(`Caja ${mov.tipo}: ${mov.concepto} · ${fmtEur(mov.importe)}`);
+  return mov;
+}
+
+function guardarMovCaja() {
+  const concepto = document.getElementById('c-concepto').value.trim();
+  const importe  = document.getElementById('c-importe').value;
+  if(!concepto || !importe) { toast('Concepto e importe son obligatorios', 'error'); return; }
+
+  const movCreado = addMovimientoCaja({
+    tipo:        document.getElementById('c-tipo').value,
+    concepto,
+    importe,
+    fecha:       document.getElementById('c-fecha').value,
+    responsable: document.getElementById('c-responsable').value.trim(),
+    notas:       document.getElementById('c-notas').value.trim()
+  });
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tipo: 'caja',
+      tipoMov: movCreado.tipo,
+      concepto: movCreado.concepto,
+      importe: movCreado.importe,
+      responsable: movCreado.responsable
+    })
+  }).catch(() => {
+    toast('Movimiento guardado en la app, pero no se pudo enviar a Google Sheets', 'error');
+  });
+
+  closeModal('modal-caja');
+  document.getElementById('c-concepto').value = '';
+  document.getElementById('c-importe').value = '';
+  document.getElementById('c-responsable').value = '';
+  document.getElementById('c-notas').value = '';
+  renderCaja();
+  toast('Movimiento registrado');
+}
+
+function renderCaja() {
+  const saldo     = getSaldoCaja();
+  const entradas  = STATE.caja.filter(m => m.tipo === 'Entrada' || m.tipo === 'Recarga').reduce((a, m) => a + m.importe, 0);
+  const salidas   = STATE.caja.filter(m => m.tipo === 'Salida').reduce((a, m) => a + m.importe, 0);
+
+  document.getElementById('caja-saldo').textContent = fmtEur(saldo);
+  document.getElementById('caja-sub').textContent = `${STATE.caja.length} movimiento${STATE.caja.length !== 1 ? 's' : ''} · Ejercicio ${APP_CONFIG.asociacion.anioFiscal}`;
+
+  document.getElementById('caja-stats').innerHTML = `
+    <div class="stat-card green"><div class="stat-label">Entradas</div><div class="stat-value">${fmtEur(entradas)}</div></div>
+    <div class="stat-card red"><div class="stat-label">Salidas</div><div class="stat-value">${fmtEur(salidas)}</div></div>
+    <div class="stat-card blue"><div class="stat-label">Movimientos</div><div class="stat-value">${STATE.caja.length}</div></div>
+  `;
+
+  const cont = document.getElementById('caja-movimientos');
+  if(!STATE.caja.length) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏦</div><div class="empty-state-title">Sin movimientos</div></div>`;
+    return;
+  }
+  const lista = [...STATE.caja].sort((a,b) => b._ts - a._ts);
+  cont.innerHTML = lista.map(m => {
+    const esSalida = m.tipo === 'Salida';
+    return `<div class="mov-row">
+      <div class="mov-dot ${esSalida ? 'salida' : 'entrada'}"></div>
+      <div class="mov-info">
+        <div class="mov-concepto">${m.concepto}</div>
+        <div class="mov-meta">${fmtDate(m.fecha)} · ${m.tipo}${m.responsable ? ' · ' + m.responsable : ''}</div>
+      </div>
+      <div class="mov-importe ${esSalida ? 'salida' : 'entrada'}">${esSalida ? '−' : '+'}${fmtEur(m.importe)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   BANCO
+   ============================================================ */
+function simularExtracto() {
+  const base = [
+    { fecha: '2026-03-01', desc: 'Transferencia cuotas socios marzo', importe:  320.00 },
+    { fecha: '2026-03-05', desc: 'Pago orquesta Fiestas 2026',        importe: -2800.00 },
+    { fecha: '2026-03-10', desc: 'Ingreso subvención ayuntamiento',   importe:  1500.00 },
+    { fecha: '2026-03-12', desc: 'Compra material decoración',        importe:  -145.50 },
+    { fecha: '2026-03-18', desc: 'Pirotecnia Hermanos García S.L.',   importe: -3200.00 },
+    { fecha: '2026-03-22', desc: 'Cuotas anunciantes programa',       importe:   850.00 },
+    { fecha: '2026-03-28', desc: 'Gastos administrativos',            importe:   -32.00 }
+  ];
+  let saldo = 4500;
+  STATE.banco = base.map((b, i) => {
+    saldo += b.importe;
+    return {
+      id: 'B' + (i+1),
+      fecha: b.fecha,
+      descripcion: b.desc,
+      importe: b.importe,
+      saldo: saldo,
+      estado: 'Pendiente',
+      _ts: Date.now() + i
+    };
+  });
+  saveState();
+  document.getElementById('banco-file-name').textContent = 'Extracto simulado cargado ✓';
+  renderBanco();
+  renderConciliacion();
+  toast('Extracto de demostración cargado');
+}
+
+function cargarExtracto(input) {
+  if(input.files[0]) {
+    document.getElementById('banco-file-name').textContent = input.files[0].name + ' (procesamiento real pendiente de integración)';
+    toast('Archivo seleccionado. Integración con backend pendiente.', 'error');
+  }
+}
+
+function renderBanco() {
+  const tbody = document.getElementById('banco-tbody');
+  if(!STATE.banco.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🏧</div><div class="empty-state-title">Carga un extracto para ver movimientos</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = STATE.banco.map(m => {
+    const esSalida = m.importe < 0;
+    const badgeClass = m.estado === 'Pendiente' ? 'badge-yellow' : m.estado === 'Conciliado' ? 'badge-green' : 'badge-red';
+    return `<tr>
+      <td class="td-mono">${fmtDate(m.fecha)}</td>
+      <td class="td-primary">${m.descripcion}</td>
+      <td class="td-mono" style="color:${esSalida ? 'var(--c-danger)' : 'var(--c-primary)'};font-weight:600;">${esSalida ? '' : '+'}${fmtEur(m.importe)}</td>
+      <td class="td-mono">${fmtEur(m.saldo)}</td>
+      <td><span class="badge ${badgeClass}">${m.estado}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="cambiarEstadoBanco('${m.id}')">⇄ Estado</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function cambiarEstadoBanco(id) {
+  const m = STATE.banco.find(x => x.id === id);
+  if(!m) return;
+  const idx = APP_CONFIG.conciliacion.estados.indexOf(m.estado);
+  m.estado = APP_CONFIG.conciliacion.estados[(idx + 1) % APP_CONFIG.conciliacion.estados.length];
+  saveState();
+  renderBanco();
+  renderConciliacion();
+}
+
+/* ============================================================
+   CONCILIACIÓN
+   ============================================================ */
+function renderConciliacion() {
+  const filtro = document.getElementById('concil-filter')?.value || '';
+  const lista = STATE.banco.filter(m => !filtro || m.estado === filtro);
+
+  const pend = STATE.banco.filter(m => m.estado === 'Pendiente').length;
+  const conc = STATE.banco.filter(m => m.estado === 'Conciliado').length;
+  const rev  = STATE.banco.filter(m => m.estado === 'Revisar').length;
+
+  document.getElementById('concil-stats').innerHTML = `
+    <div class="stat-card yellow"><div class="stat-label">Pendiente</div><div class="stat-value">${pend}</div></div>
+    <div class="stat-card green"><div class="stat-label">Conciliado</div><div class="stat-value">${conc}</div></div>
+    <div class="stat-card red"><div class="stat-label">Revisar</div><div class="stat-value">${rev}</div></div>
+    <div class="stat-card blue"><div class="stat-label">Total</div><div class="stat-value">${STATE.banco.length}</div></div>
+  `;
+
+  const cont = document.getElementById('concil-list');
+  if(!lista.length) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔄</div><div class="empty-state-title">Sin movimientos que mostrar</div></div>`;
+    return;
+  }
+  cont.innerHTML = lista.map(m => {
+    const esSalida = m.importe < 0;
+    const badgeClass = m.estado === 'Pendiente' ? 'badge-yellow' : m.estado === 'Conciliado' ? 'badge-green' : 'badge-red';
+    return `<div class="concil-row">
+      <div class="concil-desc">${fmtDate(m.fecha)} · ${m.descripcion}</div>
+      <div class="concil-amount" style="color:${esSalida ? 'var(--c-danger)' : 'var(--c-primary)'};">
+        ${esSalida ? '' : '+'}${fmtEur(m.importe)}
+      </div>
+      <span class="badge ${badgeClass}">${m.estado}</span>
+      <button class="btn btn-ghost btn-sm" onclick="cambiarEstadoBanco('${m.id}')">⇄</button>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   DOCUMENTACIÓN
+   ============================================================ */
+function abrirDrive() {
+  const url = STATE.config.driveUrl || APP_CONFIG.asociacion.driveUrl;
+  if(url) { window.open(url, '_blank'); }
+  else { toast('URL de Drive no configurada. Configúrala en Ajustes.', 'error'); }
+}
+
+function renderDocumentacion() {
+  const grid = document.getElementById('doc-grid');
+  const colorMap = { bb: 'var(--c-blue)', bg: 'var(--c-primary)', bgold: 'var(--c-warn)' };
+  grid.innerHTML = APP_CONFIG.documentacion.fichas.map(f => `
+    <div class="doc-card" onclick="toast('${f.nombre}: abre tu carpeta Drive para acceder al documento')">
+      <div class="doc-card-icon">${f.icono}</div>
+      <div class="doc-card-name">${f.nombre}</div>
+      <div class="doc-card-type" style="color:${colorMap[f.colorBadge] || 'var(--c-text3)'};">${f.tipo}</div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   RECIBOS
+   ============================================================ */
+function generarRecibos() {
+  const sinRecibo = STATE.socios.filter(s => s.estado === 'activo' && !s.cuotaPagada);
+  if(!sinRecibo.length) { toast('Todos los socios activos tienen cuota al día'); return; }
+  sinRecibo.forEach(s => {
+    const recibo = {
+      id: uuid(),
+      numero: 'REC-' + padNum(STATE.recibos.length + 1),
+      socioId: s.id,
+      socioNombre: s.nombre,
+      concepto: `Cuota anual ${APP_CONFIG.asociacion.anioFiscal}`,
+      importe: APP_CONFIG.asociacion.cuotaAnual,
+      fecha: today(),
+      estado: 'Emitido',
+      _ts: Date.now()
+    };
+    STATE.recibos.push(recibo);
+    s.cuotaPagada = true;
+  });
+  saveState();
+  renderRecibos();
+  toast(`${sinRecibo.length} recibo${sinRecibo.length !== 1 ? 's' : ''} generado${sinRecibo.length !== 1 ? 's' : ''}`);
+}
+
+function renderRecibos() {
+  const tbody = document.getElementById('recibos-tbody');
+  if(!STATE.recibos.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">🧾</div><div class="empty-state-title">Sin recibos generados</div></div></td></tr>`;
+    return;
+  }
+  const lista = [...STATE.recibos].sort((a,b) => b._ts - a._ts);
+  tbody.innerHTML = lista.map((r, i) => `<tr>
+    <td class="td-mono">${r.numero}</td>
+    <td class="td-primary">${r.socioNombre}</td>
+    <td>${r.concepto}</td>
+    <td class="td-mono" style="color:var(--c-primary);font-weight:600;">${fmtEur(r.importe)}</td>
+    <td class="td-mono">${fmtDate(r.fecha)}</td>
+    <td><span class="badge badge-green">${r.estado}</span></td>
+    <td><button class="btn btn-ghost btn-sm" onclick="toast('Envío por WhatsApp/Email: integración Make pendiente')">📤 Enviar</button></td>
+  </tr>`).join('');
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard() {
+  const activos   = STATE.socios.filter(s => s.estado === 'activo').length;
+  const bajas     = STATE.socios.filter(s => s.estado === 'baja').length;
+  const totalGasto = STATE.gastos.reduce((a, g) => a + g.importe, 0);
+  const saldo     = getSaldoCaja();
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="stat-card green">
+      <div class="stat-label">Socios activos</div>
+      <div class="stat-value">${activos}</div>
+      <div class="stat-sub">${bajas} baja${bajas !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Total gastos</div>
+      <div class="stat-value">${fmtEur(totalGasto)}</div>
+      <div class="stat-sub">${STATE.gastos.length} registros</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Saldo caja</div>
+      <div class="stat-value">${fmtEur(saldo)}</div>
+      <div class="stat-sub">${STATE.caja.length} movimientos</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">Recibos</div>
+      <div class="stat-value">${STATE.recibos.length}</div>
+      <div class="stat-sub">Ejercicio ${APP_CONFIG.asociacion.anioFiscal}</div>
+    </div>
+  `;
+
+  const actDiv = document.getElementById('dash-activity');
+  if(!STATE.actividad.length) {
+    actDiv.innerHTML = `<div class="empty-state" style="padding:24px"><div class="empty-state-sub">Sin actividad registrada</div></div>`;
+  } else {
+    actDiv.innerHTML = STATE.actividad.slice(0,8).map(a => `
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div>
+          <div class="activity-text">${a.texto}</div>
+          <div class="activity-time">${a.ts}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const pendG = STATE.gastos.filter(g => g.estado === 'Pendiente').length;
+  const pendB = STATE.banco.filter(b => b.estado === 'Pendiente').length;
+  document.getElementById('dash-ejercicio').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--c-border);">
+      <span style="font-size:13px;color:var(--c-text2);">Gastos pendientes de revisar</span>
+      <span class="badge ${pendG ? 'badge-yellow' : 'badge-green'}">${pendG}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--c-border);">
+      <span style="font-size:13px;color:var(--c-text2);">Movimientos bancarios sin conciliar</span>
+      <span class="badge ${pendB ? 'badge-yellow' : 'badge-green'}">${pendB}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+      <span style="font-size:13px;color:var(--c-text2);">Año fiscal activo</span>
+      <span class="badge badge-blue">${APP_CONFIG.asociacion.anioFiscal}</span>
+    </div>
+  `;
+}
+
+/* ============================================================
+   CONFIG
+   ============================================================ */
+function renderConfig() {
+  const c = STATE.config;
+  document.getElementById('cfg-nombre').value    = c.nombre    || '';
+  document.getElementById('cfg-cif').value       = c.cif       || '';
+  document.getElementById('cfg-telefono').value  = c.telefono  || '';
+  document.getElementById('cfg-email').value     = c.email     || '';
+  document.getElementById('cfg-direccion').value = c.direccion || '';
+  document.getElementById('cfg-cuota').value     = (c.cuotaAnual !== undefined) ? c.cuotaAnual : 0;
+  document.getElementById('cfg-anio').value      = c.anioFiscal || 2026;
+  document.getElementById('cfg-sheets').value    = c.sheetsUrl  || '';
+  document.getElementById('cfg-drive').value     = c.driveUrl   || '';
+}
+
+function guardarConfig() {
+  STATE.config = {
+    ...STATE.config,
+    nombre:    document.getElementById('cfg-nombre').value.trim(),
+    cif:       document.getElementById('cfg-cif').value.trim(),
+    telefono:  document.getElementById('cfg-telefono').value.trim(),
+    email:     document.getElementById('cfg-email').value.trim(),
+    direccion: document.getElementById('cfg-direccion').value.trim(),
+    cuotaAnual: parseFloat(document.getElementById('cfg-cuota').value) || 0,
+    anioFiscal: parseInt(document.getElementById('cfg-anio').value) || 2026,
+    sheetsUrl: document.getElementById('cfg-sheets').value.trim(),
+    driveUrl:  document.getElementById('cfg-drive').value.trim()
+  };
+  saveState();
+  document.getElementById('footer-nombre').textContent = STATE.config.nombre;
+  document.getElementById('footer-cif').textContent = 'CIF: ' + (STATE.config.cif || '—');
+  addActividad('Configuración actualizada');
+  toast('Configuración guardada');
+}
+
+/* ============================================================
+   BADGES / COUNTERS
+   ============================================================ */
+function updateBadges() {
+  document.getElementById('badge-socios').textContent = STATE.socios.filter(s => s.estado === 'activo').length;
+  document.getElementById('badge-gastos').textContent = STATE.gastos.filter(g => g.estado === 'Pendiente').length;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  loadState();
+
+  // Listeners modales
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
+  });
+
+  // Mostrar/ocultar campos anunciante
+  const sTipo = document.getElementById('s-tipo');
+  if(sTipo) {
+    sTipo.addEventListener('change', function() {
+      const f = document.getElementById('s-anunciante-fields');
+      if(f) f.style.display = this.value === 'anunciante' ? 'block' : 'none';
+    });
+  }
+
+  // Branding desde APP_CONFIG
+  document.getElementById('sidebar-emoji').textContent   = APP_CONFIG.app.emojiDefault;
+  document.getElementById('sidebar-appname').textContent = APP_CONFIG.app.nombreApp;
+  document.getElementById('sidebar-assoc').textContent   = APP_CONFIG.app.subtituloSidebar;
+
+  // Footer con datos reales
+  document.getElementById('footer-nombre').textContent = STATE.config.nombre || APP_CONFIG.asociacion.nombre;
+  document.getElementById('footer-cif').textContent    = 'CIF: ' + (STATE.config.cif || APP_CONFIG.asociacion.cif);
+
+  // Inicializar selects
+  initSocioFilters();
+  initGastoSelects();
+
+  updateBadges();
+  renderDashboard();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
